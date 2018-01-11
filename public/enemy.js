@@ -9,6 +9,7 @@ function Enemy(x,y) {
     this.toDel = false;
 
     this.show = function () {
+        noStroke();
         fill(255, 200, 0)
         ellipse(this.x, this.y, this.r * 2, this.r * 2)
     }

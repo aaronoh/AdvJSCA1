@@ -9,7 +9,6 @@ Ship.prototype.show = function(){
 }
 Ship.prototype.setDirection = function(direction){
     this.xdir = direction;
-    console.log('thissss: ' + this.xdir)
 }
 Ship.prototype.move = function(direction){
     this.x += this.xdir*5;
