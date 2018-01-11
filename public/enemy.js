@@ -16,10 +16,11 @@ function Enemy(x,y) {
 
     this.move = function () {
         this.x = this.x + this.goX;
+    }
         this.del = function () {
             this.toDel = true;
         }
-    }
+
     this.goDown = function(){
         this.goX *= -1;
         this.y += this.r;
