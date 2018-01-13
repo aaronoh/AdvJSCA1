@@ -3,7 +3,7 @@ function Enemy(x,y) {
     this.y = y;
     this.r = 15;
 
-    this.goX = 1;
+    this.goX = 5;
     //this.goY = 0;
 
     this.toDel = false;

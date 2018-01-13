@@ -35,46 +35,17 @@ MongoClient.connect(url, (err, database) => {
 
 // serve the homepage
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/start.html');
 });
 
-// add a document to the DB collection recording the click event
-app.post('/clicked', (req, res) => {
-  const click = {clickTime: new Date()};
-  //console.log(click);
-  //console.log(db);
-
-  db.collection('clicks').save(click, (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    console.log('click added to db');
-    res.redirect('/');
-  });
-});
-
-///
-app.post('/updatePos', (req, res) => {
-  let circle = {clickTime: new Date()};
-  console.log(req.body.data)
-  //console.log(db);
-  db.collection("circlePos").update({}, req.body.data), {upsert:true} function(err, res) {
-    console.log('Done')
-  }
-
-  db.collection('circlePos').save(circle, (err, result) => {
-    if (err) {
-      return console.log(err);
-    }
-    console.log('circle added to db');
-    res.redirect('/');
-  });
-});
-
-// get the click data from the database
-app.get('/clicks', (req, res) => {
-  db.collection('clicks').find().toArray((err, result) => {
-    if (err) return console.log(err);
-    res.send(result);
-  });
+// after receiving a PUT request, update the database with
+// the new x, y coords in the request body
+app.put('/score', (req, res) => {
+    console.log('Data received: ' + JSON.stringify(req.body));
+    db.collection('score').insertOne(req.body, (err, result) => {
+        if (err) {
+            return console.log(err);
+        }
+    });
+    res.sendStatus(200); // respond to the client indicating everything was ok
 });
