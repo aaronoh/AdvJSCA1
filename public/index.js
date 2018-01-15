@@ -87,8 +87,8 @@ function draw() {
             ctx.fillText("Game Over", width / 2 - 100, height / 2);
             ctx.fillText(`You hit ${score} Invaders!` , width / 2 - 150, height / 2 + 100);
             saveScore(user, score,acu, shotsFired, counter);
-            console.log(score)
-            noLoop()
+            getScore();
+            noLoop();
             break;
         }
     }
@@ -98,6 +98,7 @@ function draw() {
         ctx.fillText("You Win!", width / 2 - 100, height / 2);
         saveScore(user, score,acu, shotsFired, counter);
         console.log('Done');
+        getScore();
         noLoop();
     }
 
@@ -155,9 +156,24 @@ function saveScore(user, score, acu, shotsFired, counter ) {
         .then(function(response) {
             if(response.ok) {
                 console.log('score was updated in the DB.');
+                getScore()
                 return;
             }
             throw new Error('Request failed.');
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+}
+
+function getScore() {
+    fetch('/score', {method: 'GET'})
+        .then(function(response) {
+            if(response.ok) return response.json();
+            throw new Error('Request failed.');
+        })
+        .then(function(data) {
+           console.log(data)
         })
         .catch(function(error) {
             console.log(error);

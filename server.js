@@ -42,10 +42,19 @@ app.get('/', (req, res) => {
 // the new x, y coords in the request body
 app.put('/score', (req, res) => {
     console.log('Data received: ' + JSON.stringify(req.body));
-    db.collection('score').insertOne(req.body, (err, result) => {
+    db.collection('scores').insertOne(req.body, (err, result) => {
         if (err) {
             return console.log(err);
         }
     });
     res.sendStatus(200); // respond to the client indicating everything was ok
 });
+
+app.get('/score', (req, res) => {
+    db.collection('scores').find().sort({ score: -1}).limit(5).toArray((err, result) => {
+        if (err) return console.log(err); // log if error occurs
+        if(!result) return res.send({score: 0, user: "", acu: 0, shotsFired: 0, counter: 0}); // if no data in the DB return (0,0)
+        res.send(result); // if neither of the above, send the (x,y) from the DB
+    });
+});
+
