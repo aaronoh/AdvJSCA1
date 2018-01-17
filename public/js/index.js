@@ -13,33 +13,40 @@ const user = prompt("Please enter a username");
 
 //Variables for db
 // score, acu, shotsFired, counter
-
-function newEn(x,y){
-    for(let i = 0; i < 30; i++){
-        if(i%10 ==0){
+function newEn(x, y) {
+    //create 30 enemy objs
+    for (let i = 0; i < 30; i++) {
+        //if i modulas 10 = 0
+        if (i % 10 == 0) {
+            //add 100 to y pos
             y += 100
+            //set xpos back to 0
             x = 0
-            enemy[i] = new Enemy(x*70+70,y);
+            enemy[i] = new Enemy(x * 70 + 70, y);
             x++
 
         }
-        else{
-            enemy[i] = new Enemy(x*70+70,y);
+        else {
+            enemy[i] = new Enemy(x * 70 + 70, y);
             x++
         }
     }
 }
 
+//function to increment counter
 function timer() {
-    counter ++;
+    counter++;
 }
 
 
 function setup() {
- ship = new Ship();
- createCanvas(900,700);
- newEn(0,0);
- setInterval(timer, 1000)
+    createCanvas(900,700);
+    ship = new Ship();
+    newEn(0, 0);
+    setInterval(timer, 1000);
+
+    en = new SpecialEnemy();
+
 }
 
 function draw() {
@@ -53,6 +60,9 @@ function draw() {
     ctx.fillText(`Score: ${score}`, 10, 50);
     ship.show();
     ship.move();
+
+    en.show();
+
     //prevent ship from leaving canvas
     ship.x = constrain(ship.x, 20, width - 60);
 
@@ -81,27 +91,21 @@ function draw() {
             sides = true;
         }
 
-        if (enemy[i].y > height - 25) {
-            enemy[i].del();
-            ctx.fillStyle = "red";
-            ctx.fillText("Game Over", width / 2 - 100, height / 2);
-            ctx.fillText(`You hit ${score} Invaders!` , width / 2 - 150, height / 2 + 100);
-            saveScore(user, score,acu, shotsFired, counter);
-            getScore();
-            noLoop();
-            break;
-        }
-    }
 
-    if ( enemy.length == 0) {
-        ctx.fillStyle = "green";
-        ctx.fillText("You Win!", width / 2 - 100, height / 2);
-        saveScore(user, score,acu, shotsFired, counter);
-        console.log('Done');
+    if (enemy[i].y > height - 25) {
+        enemy[i].del();
+        ctx.fillStyle = "red";
+        ctx.fillText("Game Over", width / 2 - 100, height / 2);
+        ctx.fillText(`You hit ${score} Invaders!`, width / 2 - 150, height / 2 + 100);
+        saveScore(user, score, acu, shotsFired, counter);
         getScore();
+        setTimeout(function () {
+            location.href = "http://localhost:8080/end.html"
+        }, 1000);
         noLoop();
+        break;
     }
-
+}
 
     if (sides) {
         for (let i = 0; i < enemy.length; i++) {
@@ -109,41 +113,52 @@ function draw() {
         }
     }
 
-    acu = score/shotsFired *100;
+    if (enemy.length == 0) {
+        ctx.fillStyle = "green";
+        ctx.fillText("You Win!", width / 2 - 100, height / 2);
+        saveScore(user, score, acu, shotsFired, counter);
+        console.log('Done');
+        getScore();
+        setTimeout(function () {
+            location.href = "http://localhost:8080/end.html"
+        }, 1000);
+        noLoop();
+    }
+
+    acu = shotsFired ? score / shotsFired * 100 : 0;
     ctx.fillStyle = "white";
     ctx.fillText(`       Shots Fired: ${shotsFired}              Accuracy: ${Math.floor(acu)}%`, 300, 50)
 
     //if going forward  through and array and an item is removed - potential to skip elements - read backwards
-    for(let i = enemy.length-1; i >=0; i--) {
-      if(enemy[i].toDel){
-          enemy.splice(i,1);
-      }
+    //If obj marked for deleteion, delete it
+    for (let i = enemy.length - 1; i >= 0; i--) {
+        if (enemy[i].toDel) {
+            enemy.splice(i, 1);
+        }
     }
-
-    for(let i = shots.length-1; i >=0; i--) {
-        if(shots[i].toDel){
-            shots.splice(i,1);
+    for (let i = shots.length - 1; i >= 0; i--) {
+        if (shots[i].toDel) {
+            shots.splice(i, 1);
         }
     }
 }
 
-function keyPressed(){
-  if (key === ' '){
-      let shot = new Shot(ship.x + 20, height-20);
-      shots.push(shot);
-      shotsFired++;
-  }
-  if (keyCode === RIGHT_ARROW){
-    ship.setDirection(1);
-  }
-  else if (keyCode === LEFT_ARROW) {
-    ship.setDirection(-1);
-  }
+function keyPressed() {
+    if (key === ' ') {
+        let shot = new Shot(ship.x + 20, height - 20);
+        shots.push(shot);
+        shotsFired++;
+    }
+    if (keyCode === RIGHT_ARROW) {
+        ship.setDirection(1);
+    }
+    else if (keyCode === LEFT_ARROW) {
+        ship.setDirection(-1);
+    }
 }
 
 
-
-function saveScore(user, score, acu, shotsFired, counter ) {
+function saveScore(user, score, acu, shotsFired, counter) {
     console.log(user, score, acu, shotsFired, counter)
     fetch('/score', {
         method: 'PUT',
@@ -153,29 +168,29 @@ function saveScore(user, score, acu, shotsFired, counter ) {
             'Content-Type': 'application/json'
         }
     })
-        .then(function(response) {
-            if(response.ok) {
+        .then(function (response) {
+            if (response.ok) {
                 console.log('score was updated in the DB.');
                 getScore()
                 return;
             }
             throw new Error('Request failed.');
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.log(error);
         });
 }
 
 function getScore() {
     fetch('/score', {method: 'GET'})
-        .then(function(response) {
-            if(response.ok) return response.json();
+        .then(function (response) {
+            if (response.ok) return response.json();
             throw new Error('Request failed.');
         })
-        .then(function(data) {
-           console.log(data)
+        .then(function (data) {
+            console.log(data)
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.log(error);
         });
 }

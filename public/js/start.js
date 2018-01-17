@@ -2,11 +2,10 @@
 function setup() {
     let cnv = createCanvas(900,700);
     cnv.parent('sketch-holder');
-
 }
 
 function draw() {
-    background(40)
+    background(40);
     var canvas = document.getElementById("defaultCanvas0");
     var ctx = canvas.getContext("2d");
     ctx.font = "50px Arial";
