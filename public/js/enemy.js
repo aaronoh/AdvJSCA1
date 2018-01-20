@@ -1,9 +1,10 @@
-function Enemy(x,y,colour = 'yellow') {
+//Default params
+function Enemy(x,y,colour = 'yellow', r =15, go = 5) {
     this.x = x;
     this.y = y;
     this.colour = colour;
-    this.r = 15;
-    this.goX = 5;
+    this.r = r;
+    this.goX = go;
     //def
 
     //bool used to mark for deletion

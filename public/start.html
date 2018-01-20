@@ -5,8 +5,14 @@
     <title>Start Game</title>
     <script src = https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.js></script>
     <script src="js/start.js"></script>
+    <script src="js/index.js"></script>
 </head>
 <body>
-<a href="sketch.html"><div id = "sketch-holder"></div></a>
+<div id = "start_canv" style="color: white;background-color:#484840; width: 900px; height: 700px;">
+    <img src="moon.png" style=" margin-top: 150px;margin-left: 100px; width: 150px;">
+    <h1 style="font-family: -apple-system; color: #EF4836; margin-top: -100px; margin-left: 31%">Space Invaders </br> </br>  Enter your username to begin. </h1>
+    <input id = "user"type="text" placeholder="Username" style="margin-left:300px;margin-top:50px;height:25px;width:150px;">
+    <input type="button" onclick="setUser()"value="Play!">
+</div>
 </body>
 </html>

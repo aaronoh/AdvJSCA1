@@ -1,5 +1,5 @@
-function SpecialEnemy(){
-    Enemy.call(this, 100, 200,'red')
+function SpecialEnemy(x,y){
+    Enemy.call(this, x, y,'red', 25, 2)
 }
 
 SpecialEnemy.prototype = Object.create(Enemy.prototype);
