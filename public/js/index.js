@@ -170,8 +170,9 @@ if (user) {
             noLoop();
         }
 
-        //calculate accuracy
-        acu = shotsFired ? score / shotsFired * 100 : 0;
+        //calculate accuracy - use score calc to offset the score incremnt change caused by special enemy
+        let scoreCalc = 30 - enemy.length
+        acu = shotsFired ? scoreCalc / shotsFired * 100 : 0;
         //output shots fired/rounded down % accuracy
         ctx.fillStyle = "white";
         ctx.fillText(`       Shots Fired: ${shotsFired}              Accuracy: ${Math.floor(acu)}%`, 300, 50);
