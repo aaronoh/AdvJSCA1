@@ -12,13 +12,10 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-/**bodyParser.json(options)
- * Parses the text as JSON and exposes the resulting object on req.body.
- */
+/* Parses the text as JSON and exposes the resulting object on req.body.*/
 app.use(bodyParser.json());
 // connect to the db and start the express server
 let db;
-
 // Replace the URL below with the URL for your database
 const url =  'mongodb://aaron:thisismydbpass@ds129936.mlab.com:29936/aaronsdb';
 
@@ -38,8 +35,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/start.html');
 });
 
-// after receiving a PUT request, update the database with
-// the new x, y coords in the request body
+//after receiving a PUT request, update the database with the results request body
 app.put('/score', (req, res) => {
     console.log('Data received: ' + JSON.stringify(req.body));
     db.collection('scores').insertOne(req.body, (err, result) => {
@@ -50,11 +46,12 @@ app.put('/score', (req, res) => {
     res.sendStatus(200); // respond to the client indicating everything was ok
 });
 
+//after recieving a get request on /score, find the top 5 scores in the db
 app.get('/score', (req, res) => {
     db.collection('scores').find().sort({ score: -1}).limit(5).toArray((err, result) => {
-        if (err) return console.log(err); // log if error occurs
-        if(!result) return res.send({score: 0, user: "", acu: 0, shotsFired: 0, counter: 0}); // if no data in the DB return (0,0)
-        res.send(result); // if neither of the above, send the (x,y) from the DB
+        if (err) return console.log(err); // log if errors
+        if(!result) return res.send({score: 0, user: "", acu: 0, shotsFired: 0, counter: 0}); // if no data in the DB return blank result set
+        res.send(result); // if neither of the above, send the results from the DB
     });
 });
 
